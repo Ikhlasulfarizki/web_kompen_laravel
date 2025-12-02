@@ -2,8 +2,6 @@
 <html>
 <head>
     <title>Tambah Mahasiswa</title>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 
@@ -15,7 +13,6 @@
 
 <form action="{{ route('mahasiswa.store') }}" method="POST">
     @csrf
-
     <label>NPM :</label><br>
     <input type="text" name="npm"><br><br>
 
@@ -51,8 +48,7 @@
 
     <button type="submit">Tambah Mahasiswa</button>
 </form>
-
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     // Ketika jurusan dipilih → ambil prodi
     $("#jurusan").change(function () {

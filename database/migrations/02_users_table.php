@@ -39,7 +39,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained('users');
             $table->string('npm', 45)->nullable();
-            $table->datetime('tgl_lahir')->nullable();
+            $table->date('tgl_lahir')->nullable();
             $table->string('nama', 45)->nullable();
             $table->string('jenis_kelamin', 45)->nullable();
             $table->foreignId('id_kelas')->nullable()->constrained('kelas');
@@ -50,7 +50,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained('users');;
             $table->string('nip', 45)->nullable();
-            $table->datetime('tgl_lahir')->nullable();
+            $table->date('tgl_lahir')->nullable();
             $table->string('nama', 45)->nullable();
             $table->string('jenis_kelamin', 45)->nullable();
             $table->foreignId('id_prodi')->nullable()->constrained('prodi');
