@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Models\Mahasiswa;
 use App\Models\Kelas;
@@ -8,7 +8,7 @@ use App\Models\Jurusan;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-
+use App\Http\Controllers\Controller;
 
 class AdminController extends Controller
 {
@@ -23,7 +23,7 @@ class AdminController extends Controller
     }
 
     public function tambahMahasiswa(){
-        $jurusan = jurusan::all();
+        $jurusan = Jurusan::all();
         return view('admin/tambah', compact('jurusan'));
     }
 
@@ -63,7 +63,7 @@ class AdminController extends Controller
     }
 
     public function updateMahasiswa(Request $request, $id){
-        $mhs = Mahasiswa::FindOrFail($id);
+        $mhs = Mahasiswa::findOrFail($id);
         $mhs->update( [
             'npm' => $request->npm,
             'nama' => $request->nama,
@@ -74,12 +74,12 @@ class AdminController extends Controller
         return redirect()->route('admin.dashboard')->with('success','Data Berhasil Diubah!');
     }
 
-        public function deleteMahasiswa($id){
-            $mhs = Mahasiswa::findOrFail($id);
-            $mhs->delete();
+    public function deleteMahasiswa($id){
+        $mhs = Mahasiswa::findOrFail($id);
+        $mhs->delete();
 
-            return redirect()->route('admin.dashboard')->with('success', 'Data berhasil dihapus!');
-        }
+        return redirect()->route('admin.dashboard')->with('success', 'Data berhasil dihapus!');
+    }
 
     public function getProdi($id_jurusan){
         $prodi = Prodi::where('id_jurusan', $id_jurusan)->get();

@@ -12,13 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table("mahasiswa", function (Blueprint $table){
-            $table->timestamp("created_at")->nullable();
-            $table->timestamp("updated_at")->nullable();
+            if (!Schema::hasColumn('mahasiswa', 'created_at')) {
+                $table->timestamp("created_at")->nullable();
+            }
+            if (!Schema::hasColumn('mahasiswa', 'updated_at')) {
+                $table->timestamp("updated_at")->nullable();
+            }
         });
 
         Schema::table("dosen", function (Blueprint $table){
-            $table->timestamp("created_at")->nullable();
-            $table->timestamp("updated_at")->nullable();
+            if (!Schema::hasColumn('dosen', 'created_at')) {
+                $table->timestamp("created_at")->nullable();
+            }
+            if (!Schema::hasColumn('dosen', 'updated_at')) {
+                $table->timestamp("updated_at")->nullable();
+            }
         });
     }
 

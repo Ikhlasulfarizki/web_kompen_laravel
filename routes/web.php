@@ -1,19 +1,21 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\MahasiswaController;
+use App\Http\Controllers\Admin\DosenController;
+use App\Http\Controllers\Admin\KompenController;
+use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\JurusanController;
+use App\Http\Controllers\Admin\ProdiController;
+use App\Http\Controllers\Admin\KelasController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\LoginController;
 
 
 Route::get('/', function () {
     return view('login');
 });
-
-Route::get('/profile', function () {
-    return view('profile');
-});
-
-
 
 // Login
 Route::get('/login', [LoginController::class, 'showLogin'])->name('login');
@@ -22,32 +24,53 @@ Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // Setelah login
 Route::middleware('auth')->group(function () {
+    
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/admin/dashboard', [AdminController::class, 'showMahasiswa'])
-    ->name('admin.dashboard')
-    ->middleware('role:1');
+    // Admin Routes
+    Route::middleware('role:1')->group(function () {
+        // Dashboard Admin
+        Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
-    Route::get('/dosen/dashboard', function () {
-        return "Dashboard Dosen";
-    })->name('dosen.dashboard')->middleware('role:2');
+        // AJAX untuk dynamic dropdown - harus didefinisikan sebelum resource routes
+        Route::get('/admin/get-prodi/{id_jurusan}', [MahasiswaController::class, 'getProdi'])->name('admin.get-prodi');
+        Route::get('/admin/get-kelas/{id_prodi}', [MahasiswaController::class, 'getKelas'])->name('admin.get-kelas');
 
-    Route::get('/mahasiswa/dashboard', function () {
-        return "Dashboard Mahasiswa";
-    })->name('mahasiswa.dashboard')->middleware('role:3');
+        // Mahasiswa
+        Route::resource('admin/mahasiswa', MahasiswaController::class, ['as' => 'admin']);
 
-    Route::get('/admin/tambah', [AdminController::class, 'TambahMahasiswa'])->name('mahasiswa.form');
-    Route::post('/admin/tambah', [AdminController::class, 'storeMahasiswa'])->name('mahasiswa.store');
+        // Dosen
+        Route::resource('admin/dosen', DosenController::class, ['as' => 'admin']);
 
-    Route::get('/admin/edit/{id}', [AdminController::class, 'editMahasiswa'])
-        ->name('mahasiswa.edit');
-    Route::post('/admin/update/{id}', [AdminController::class, 'updateMahasiswa'])
-        ->name('mahasiswa.update');
-    Route::delete('/admin/dashboard/{id}', [AdminController::class, 'deleteMahasiswa'])
-        ->name('mahasiswa.delete');
+        // Kompen
+        Route::resource('admin/kompen', KompenController::class, ['as' => 'admin']);
 
-        
-    // AJAX untuk dynamic dropdown
-    Route::get('/get-prodi/{id_jurusan}', [AdminController::class, 'getProdi']);
-    Route::get('/get-kelas/{id_prodi}', [AdminController::class, 'getKelas']);
+        // Master Data
+        Route::resource('admin/jurusan', JurusanController::class, ['as' => 'admin']);
+        Route::resource('admin/prodi', ProdiController::class, ['as' => 'admin']);
+        Route::resource('admin/kelas', KelasController::class, ['as' => 'admin']);
+
+        // Users
+        Route::resource('admin/users', UserController::class, ['as' => 'admin']);
+
+        // Profile Admin
+        Route::get('/admin/profile', [ProfileController::class, 'show'])->name('admin.profile.show');
+        Route::get('/admin/profile/edit', [ProfileController::class, 'edit'])->name('admin.profile.edit');
+        Route::put('/admin/profile', [ProfileController::class, 'update'])->name('admin.profile.update');
+    });
+
+    // Dosen Routes
+    Route::middleware('role:2')->group(function () {
+        Route::get('/dosen/dashboard', function () {
+            return "Dashboard Dosen";
+        })->name('dosen.dashboard');
+    });
+
+    // Mahasiswa Routes
+    Route::middleware('role:3')->group(function () {
+        Route::get('/mahasiswa/dashboard', function () {
+            return "Dashboard Mahasiswa";
+        })->name('mahasiswa.dashboard');
+    });
 });
-    // User buka /admin → Route terdeteksi → Controller dipanggil → View direturn → Halaman tampil

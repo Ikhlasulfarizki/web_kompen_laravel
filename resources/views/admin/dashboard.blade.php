@@ -1,46 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
-<h2>Daftar Mahasiswa</h2>
-<h2><a href="tambah">Tambah Mahasiswa</a></h2>
+@extends('layouts.app')
 
-<table border="1" cellpadding="8">
-    <tr>
-        <th>NPM</th>
-        <th>Nama</th>
-        <th>Jenis Kelamin</th>
-        <th>Jumlah Jam</th>
-        <th>Jurusan</th>
-        <th>Prodi</th>
-        <th>Kelas</th>
-        <th>Action</th>
-    </tr>
+@section('content')
+<div class="p-8">
+    <h1 class="text-3xl font-bold mb-8">Dashboard Admin</h1>
 
-    @foreach($mahasiswa as $mhs)
-        <tr>
-            <td>{{ $mhs->npm }}</td>
-            <td>{{ $mhs->nama }}</td>
-            <td>{{ ($mhs->jenis_kelamin == "L") ? "Laki-Laki" : "Perempuan"}}</td>
-            <td>{{ $mhs->jumlah_jam }}</td>
-            <td>{{ $mhs->kelas->prodi->jurusan->nama_jurusan }}</td>
-            <td>{{ $mhs->kelas->prodi->nama_prodi }}</td>
-            <td>{{ $mhs->kelas->nama_kelas }}</td>
-            <td>
-                <a href="{{route('mahasiswa.edit', $mhs->id)}}">Edit</a>
-                <form action="{{ route('mahasiswa.delete', $mhs->id) }}" method="POST" style="display:inline;">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" onclick="return confirm('Yakin hapus?')">Delete</button>
-                </form>
-            </td>
-        </tr>
-    @endforeach
-</table>
-</body>
-</html>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Card Total Mahasiswa -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">Total Mahasiswa</p>
+                    <p class="text-3xl font-bold text-blue-600">{{ $totalMahasiswa }}</p>
+                </div>
+                <div class="text-4xl text-blue-200">👥</div>
+            </div>
+        </div>
+
+        <!-- Card Total Dosen -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">Total Dosen</p>
+                    <p class="text-3xl font-bold text-green-600">{{ $totalDosen }}</p>
+                </div>
+                <div class="text-4xl text-green-200">👨‍🏫</div>
+            </div>
+        </div>
+
+        <!-- Card Total Task -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">Total Task/Kompen</p>
+                    <p class="text-3xl font-bold text-purple-600">{{ $totalTask }}</p>
+                </div>
+                <div class="text-4xl text-purple-200">📋</div>
+            </div>
+        </div>
+
+        <!-- Card Total Participants -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">Total Peserta</p>
+                    <p class="text-3xl font-bold text-orange-600">{{ $totalParticipant }}</p>
+                </div>
+                <div class="text-4xl text-orange-200">📝</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-xl font-bold mb-4">Menu Utama</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <a href="{{ route('admin.mahasiswa.index') }}" class="bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-lg text-center font-semibold transition">
+                Kelola Mahasiswa
+            </a>
+            <a href="{{ route('admin.dosen.index') }}" class="bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-lg text-center font-semibold transition">
+                Kelola Dosen
+            </a>
+            <a href="{{ route('admin.kompen.index') }}" class="bg-purple-500 hover:bg-purple-600 text-white py-3 px-4 rounded-lg text-center font-semibold transition">
+                Kelola Kompen
+            </a>
+            <a href="{{ route('admin.profile.show') }}" class="bg-gray-500 hover:bg-gray-600 text-white py-3 px-4 rounded-lg text-center font-semibold transition">
+                Profil Saya
+            </a>
+        </div>
+    </div>
+</div>
+@endsection

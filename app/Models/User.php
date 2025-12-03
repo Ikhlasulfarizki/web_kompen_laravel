@@ -45,4 +45,22 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // Relasi ke Role
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id');
+    }
+
+    // Relasi ke Mahasiswa
+    public function mahasiswa()
+    {
+        return $this->hasOne(Mahasiswa::class, 'user_id');
+    }
+
+    // Relasi ke Dosen
+    public function dosen()
+    {
+        return $this->hasOne(Dosen::class, 'user_id');
+    }
 }

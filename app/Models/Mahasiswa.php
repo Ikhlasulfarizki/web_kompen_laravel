@@ -8,6 +8,7 @@ class Mahasiswa extends Model
 {
     protected $table = "mahasiswa";
     protected $fillable = [
+        "user_id",
         "npm",
         "tgl_lahir",
         "nama",
@@ -23,4 +24,15 @@ class Mahasiswa extends Model
         return $this->belongsTo(Kelas::class, 'id_kelas');
     }
 
+    // Relasi ke User
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    // Relasi ke Participants
+    public function participants()
+    {
+        return $this->hasMany(Participant::class, 'id_mhs');
+    }
 }

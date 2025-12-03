@@ -23,7 +23,6 @@ class Kelas extends Model
     {
         return $this->hasMany(Mahasiswa::class, 'id_kelas');
     }
-
 }
 
 

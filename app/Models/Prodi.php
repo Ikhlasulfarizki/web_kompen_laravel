@@ -23,4 +23,9 @@ class Prodi extends Model
         return $this->hasMany(Kelas::class, 'id_prodi');
     }
 
+    // Relasi ke Dosen
+    public function dosens()
+    {
+        return $this->hasMany(Dosen::class, 'id_prodi');
+    }
 }
