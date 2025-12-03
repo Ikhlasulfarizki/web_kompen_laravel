@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Kelas;
 use App\Models\Prodi;
+use App\Models\Jurusan;
 use Illuminate\Http\Request;
 
 class KelasController extends Controller
@@ -17,8 +18,15 @@ class KelasController extends Controller
 
     public function create()
     {
+        $jurusan = Jurusan::all();
         $prodi = Prodi::with('jurusan')->get();
-        return view('admin.kelas.create', compact('prodi'));
+        return view('admin.kelas.create', compact('jurusan', 'prodi'));
+    }
+
+    public function getProdi($id_jurusan)
+    {
+        $prodi = Prodi::where('id_jurusan', $id_jurusan)->get();
+        return response()->json($prodi);
     }
 
     public function store(Request $request)
@@ -36,8 +44,9 @@ class KelasController extends Controller
     public function edit($id)
     {
         $kelas = Kelas::with('prodi.jurusan')->findOrFail($id);
+        $jurusan = Jurusan::all();
         $prodi = Prodi::with('jurusan')->get();
-        return view('admin.kelas.edit', compact('kelas', 'prodi'));
+        return view('admin.kelas.edit', compact('kelas', 'jurusan', 'prodi'));
     }
 
     public function update(Request $request, $id)
@@ -55,9 +64,16 @@ class KelasController extends Controller
 
     public function destroy($id)
     {
-        $kelas = Kelas::findOrFail($id);
-        $kelas->delete();
+        try {
+            $kelas = Kelas::findOrFail($id);
+            $nama_kelas = $kelas->nama_kelas;
 
-        return redirect()->route('admin.kelas.index')->with('success', 'Kelas berhasil dihapus!');
+            // Cascade delete will automatically delete related mahasiswa
+            $kelas->delete();
+
+            return redirect()->route('admin.kelas.index')->with('success', "Kelas '$nama_kelas' dan semua data terkait (Mahasiswa) berhasil dihapus!");
+        } catch (\Exception $e) {
+            return redirect()->route('admin.kelas.index')->with('error', 'Gagal menghapus Kelas: ' . $e->getMessage());
+        }
     }
 }

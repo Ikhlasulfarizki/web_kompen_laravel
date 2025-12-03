@@ -50,9 +50,16 @@ class JurusanController extends Controller
 
     public function destroy($id)
     {
-        $jurusan = Jurusan::findOrFail($id);
-        $jurusan->delete();
+        try {
+            $jurusan = Jurusan::findOrFail($id);
+            $nama_jurusan = $jurusan->nama_jurusan;
 
-        return redirect()->route('admin.jurusan.index')->with('success', 'Jurusan berhasil dihapus!');
+            // Cascade delete will automatically delete related prodi, kelas, mahasiswa, dosen
+            $jurusan->delete();
+
+            return redirect()->route('admin.jurusan.index')->with('success', "Jurusan '$nama_jurusan' dan semua data terkait (Prodi, Kelas, Mahasiswa, Dosen) berhasil dihapus!");
+        } catch (\Exception $e) {
+            return redirect()->route('admin.jurusan.index')->with('error', 'Gagal menghapus Jurusan: ' . $e->getMessage());
+        }
     }
 }

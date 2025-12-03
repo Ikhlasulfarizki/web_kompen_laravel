@@ -36,7 +36,7 @@ class MahasiswaController extends Controller
 
         $user = User::create([
             'username' => $request->npm,
-            'password' => Hash::make(date("dmY", strtotime($request->tgl_lahir))),
+            'password' => date("dmY", strtotime($request->tgl_lahir)),
             'role_id' => 3, // Role mahasiswa
         ]);
 
@@ -78,15 +78,9 @@ class MahasiswaController extends Controller
     public function destroy($id)
     {
         $mahasiswa = Mahasiswa::findOrFail($id);
-        $user_id = $mahasiswa->user_id;
-        
-        // Hapus mahasiswa terlebih dahulu
+
+        // Hapus mahasiswa (user akan otomatis terhapus karena onDelete cascade)
         $mahasiswa->delete();
-        
-        // Kemudian hapus user
-        if ($user_id) {
-            User::find($user_id)?->delete();
-        }
 
         return redirect()->route('admin.mahasiswa.index')->with('success', 'Data mahasiswa berhasil dihapus!');
     }

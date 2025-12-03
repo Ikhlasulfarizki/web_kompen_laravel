@@ -51,11 +51,21 @@
             </div>
 
             <div class="mb-6">
+                <label for="id_jurusan" class="block text-gray-700 font-semibold mb-2">Jurusan <span class="text-red-500">*</span></label>
+                <select id="id_jurusan" name="id_jurusan" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
+                    <option value="">Pilih Jurusan</option>
+                    @foreach($jurusan as $j)
+                        <option value="{{ $j->id }}" {{ old('id_jurusan', $dosen->prodi->id_jurusan) == $j->id ? 'selected' : '' }}>{{ $j->nama_jurusan }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="mb-6">
                 <label for="id_prodi" class="block text-gray-700 font-semibold mb-2">Program Studi <span class="text-red-500">*</span></label>
                 <select id="id_prodi" name="id_prodi" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 @error('id_prodi') border-red-500 @enderror">
                     <option value="">Pilih Program Studi</option>
                     @foreach($prodi as $p)
-                        <option value="{{ $p->id }}" {{ old('id_prodi', $dosen->id_prodi) == $p->id ? 'selected' : '' }}>{{ $p->nama_prodi }} ({{ $p->jurusan->nama_jurusan }})</option>
+                        <option value="{{ $p->id }}" {{ old('id_prodi', $dosen->id_prodi) == $p->id ? 'selected' : '' }}>{{ $p->nama_prodi }}</option>
                     @endforeach
                 </select>
                 @error('id_prodi')
@@ -73,5 +83,40 @@
             </div>
         </form>
     </div>
-</div>
-@endsection
+
+    <script>
+        document.getElementById('id_jurusan').addEventListener('change', function() {
+            const jurusanId = this.value;
+            const prodiSelect = document.getElementById('id_prodi');
+
+            if (!jurusanId) {
+                prodiSelect.innerHTML = '<option value="">Pilih Program Studi</option>';
+                return;
+            }
+
+            // Fetch prodi berdasarkan jurusan yang dipilih
+            fetch(`/admin/dosen/get-prodi/${jurusanId}`)
+                .then(response => response.json())
+                .then(data => {
+                    prodiSelect.innerHTML = '<option value="">Pilih Program Studi</option>';
+                    data.forEach(prodi => {
+                        const option = document.createElement('option');
+                        option.value = prodi.id;
+                        option.textContent = prodi.nama_prodi;
+                        prodiSelect.appendChild(option);
+                    });
+
+                    // Set nilai yang dipilih sebelumnya jika ada
+                    const selectedProdi = '{{ old('id_prodi', $dosen->id_prodi) }}';
+                    if (selectedProdi) {
+                        prodiSelect.value = selectedProdi;
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+        // Trigger change event saat halaman load
+        if (document.getElementById('id_jurusan').value) {
+            document.getElementById('id_jurusan').dispatchEvent(new Event('change'));
+        }
+    </script>

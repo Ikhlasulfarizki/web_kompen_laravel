@@ -16,19 +16,19 @@ return new class extends Migration
             $table->string("judul", 50)->nullable();
             $table->longText("deskripsi")->nullable();
             $table->string("lokasi", 50)->nullable();
-            $table->datetime("tanggal_waktu")->nullable();
+            $table->dateTime("tanggal_waktu")->nullable();
             $table->integer("kuota")->nullable();
-            $table->time("jam_mulai")->nullable();
-            $table->time("jam_selesai")->nullable();
+            $table->string("jam_mulai")->nullable();
+            $table->string("jam_selesai")->nullable();
             $table->integer("jmlh_jam")->nullable();
-            $table->foreignId("id_dosen")->nullable()->constrained('dosen');;
+            $table->foreignId("id_dosen")->nullable()->constrained('dosen')->onDelete('cascade');
             $table->timestamps();
         });
 
         Schema::create('participants', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("id_task")->nullable()->constrained('tasks');;
-            $table->foreignId("id_mhs")->nullable()->constrained('mahasiswa');;
+            $table->foreignId("id_task")->nullable()->constrained('tasks')->onDelete('cascade');
+            $table->foreignId("id_mhs")->nullable()->constrained('mahasiswa')->onDelete('cascade');
             $table->string("status_pendaftaran", 50)->nullable();
             $table->longText("status_penyelesaian")->nullable();
             $table->string("status_acc", 50)->nullable();

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Dosen;
 use App\Models\Prodi;
+use App\Models\Jurusan;
 use App\Models\User;
 use App\Models\Task;
 use Illuminate\Http\Request;
@@ -20,8 +21,9 @@ class DosenController extends Controller
 
     public function create()
     {
+        $jurusan = Jurusan::all();
         $prodi = Prodi::with('jurusan')->get();
-        return view('admin.dosen.create', compact('prodi'));
+        return view('admin.dosen.create', compact('jurusan', 'prodi'));
     }
 
     public function store(Request $request)
@@ -36,7 +38,7 @@ class DosenController extends Controller
 
         $user = User::create([
             'username' => $request->nip,
-            'password' => Hash::make(date("dmY", strtotime($request->tgl_lahir))),
+            'password' => date("dmY", strtotime($request->tgl_lahir)),
             'role_id' => 2, // Role dosen
         ]);
 
@@ -55,8 +57,15 @@ class DosenController extends Controller
     public function edit($id)
     {
         $dosen = Dosen::with('prodi.jurusan')->findOrFail($id);
+        $jurusan = Jurusan::all();
         $prodi = Prodi::with('jurusan')->get();
-        return view('admin.dosen.edit', compact('dosen', 'prodi'));
+        return view('admin.dosen.edit', compact('dosen', 'jurusan', 'prodi'));
+    }
+
+    public function getProdi($id_jurusan)
+    {
+        $prodi = Prodi::where('id_jurusan', $id_jurusan)->get();
+        return response()->json($prodi);
     }
 
     public function update(Request $request, $id)
@@ -78,18 +87,9 @@ class DosenController extends Controller
     public function destroy($id)
     {
         $dosen = Dosen::findOrFail($id);
-        $user_id = $dosen->user_id;
-        
-        // Hapus semua tasks yang dimiliki dosen terlebih dahulu
-        Task::where('id_dosen', $dosen->id)->delete();
-        
-        // Hapus dosen
+
+        // Hapus dosen (tasks dan user akan otomatis terhapus karena onDelete cascade)
         $dosen->delete();
-        
-        // Kemudian hapus user
-        if ($user_id) {
-            User::find($user_id)?->delete();
-        }
 
         return redirect()->route('admin.dosen.index')->with('success', 'Data dosen berhasil dihapus!');
     }

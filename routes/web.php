@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\JurusanController;
 use App\Http\Controllers\Admin\ProdiController;
 use App\Http\Controllers\Admin\KelasController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\TeknisiController;
 use App\Http\Controllers\LoginController;
 
 
@@ -20,11 +21,11 @@ Route::get('/', function () {
 // Login
 Route::get('/login', [LoginController::class, 'showLogin'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.process');
-Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // Setelah login
 Route::middleware('auth')->group(function () {
-    
+
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -36,12 +37,17 @@ Route::middleware('auth')->group(function () {
         // AJAX untuk dynamic dropdown - harus didefinisikan sebelum resource routes
         Route::get('/admin/get-prodi/{id_jurusan}', [MahasiswaController::class, 'getProdi'])->name('admin.get-prodi');
         Route::get('/admin/get-kelas/{id_prodi}', [MahasiswaController::class, 'getKelas'])->name('admin.get-kelas');
+        Route::get('/admin/kelas/get-prodi/{id_jurusan}', [KelasController::class, 'getProdi'])->name('admin.kelas.get-prodi');
+        Route::get('/admin/dosen/get-prodi/{id_jurusan}', [DosenController::class, 'getProdi'])->name('admin.dosen.get-prodi');
 
         // Mahasiswa
         Route::resource('admin/mahasiswa', MahasiswaController::class, ['as' => 'admin']);
 
         // Dosen
         Route::resource('admin/dosen', DosenController::class, ['as' => 'admin']);
+
+        // Teknisi
+        Route::resource('admin/teknisi', TeknisiController::class, ['as' => 'admin']);
 
         // Kompen
         Route::resource('admin/kompen', KompenController::class, ['as' => 'admin']);
@@ -72,5 +78,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/mahasiswa/dashboard', function () {
             return "Dashboard Mahasiswa";
         })->name('mahasiswa.dashboard');
+    });
+
+    // Teknisi Routes
+    Route::middleware('role:4')->group(function () {
+        Route::get('/teknisi/dashboard', function () {
+            return "Dashboard Teknisi";
+        })->name('teknisi.dashboard');
     });
 });

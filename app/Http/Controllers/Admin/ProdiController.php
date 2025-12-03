@@ -55,9 +55,16 @@ class ProdiController extends Controller
 
     public function destroy($id)
     {
-        $prodi = Prodi::findOrFail($id);
-        $prodi->delete();
+        try {
+            $prodi = Prodi::findOrFail($id);
+            $nama_prodi = $prodi->nama_prodi;
 
-        return redirect()->route('admin.prodi.index')->with('success', 'Program Studi berhasil dihapus!');
+            // Cascade delete will automatically delete related kelas, mahasiswa, dosen
+            $prodi->delete();
+
+            return redirect()->route('admin.prodi.index')->with('success', "Program Studi '$nama_prodi' dan semua data terkait (Kelas, Mahasiswa, Dosen) berhasil dihapus!");
+        } catch (\Exception $e) {
+            return redirect()->route('admin.prodi.index')->with('error', 'Gagal menghapus Program Studi: ' . $e->getMessage());
+        }
     }
 }

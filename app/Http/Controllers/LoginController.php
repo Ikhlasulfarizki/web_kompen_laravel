@@ -24,9 +24,9 @@ class LoginController extends Controller
                 case 1:
                     return redirect()->route('admin.dashboard');
                 case 2:
-                    // return redirect()->route('dosen.dashboard');
+                    return redirect()->route('dosen.dashboard');
                 case 3:
-                    // return redirect()->route('mahasiswa.dashboard');
+                    return redirect()->route('mahasiswa.dashboard');
             }
         }
         return back()->with('error', 'Username atau Password Salah');
@@ -37,6 +37,4 @@ class LoginController extends Controller
         Auth::logout();
         return redirect()->route('login');
     }
-
-
 }

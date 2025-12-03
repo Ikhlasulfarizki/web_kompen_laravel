@@ -37,23 +37,25 @@ return new class extends Migration
 
         Schema::create('mahasiswa', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained('users');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->string('npm', 45)->nullable();
             $table->date('tgl_lahir')->nullable();
             $table->string('nama', 45)->nullable();
             $table->string('jenis_kelamin', 45)->nullable();
-            $table->foreignId('id_kelas')->nullable()->constrained('kelas');
+            $table->foreignId('id_kelas')->nullable()->constrained('kelas')->onDelete('cascade');
             $table->integer('jumlah_jam')->nullable();
+            $table->timestamps();
         });
 
         Schema::create('dosen', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained('users');;
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->string('nip', 45)->nullable();
             $table->date('tgl_lahir')->nullable();
             $table->string('nama', 45)->nullable();
             $table->string('jenis_kelamin', 45)->nullable();
-            $table->foreignId('id_prodi')->nullable()->constrained('prodi');
+            $table->foreignId('id_prodi')->nullable()->constrained('prodi')->onDelete('cascade');
+            $table->timestamps();
         });
     }
 
