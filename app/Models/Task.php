@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Task extends Model
 {
     protected $table = "tasks";
-    
+
     protected $fillable = [
         "judul",
         "deskripsi",
@@ -30,9 +30,24 @@ class Task extends Model
         return $this->belongsTo(Dosen::class, 'id_dosen');
     }
 
-    // Relasi ke Participants
+    // Relasi ke Participants dengan cascade delete
     public function participants()
     {
         return $this->hasMany(Participant::class, 'id_task');
     }
+
+    /**
+     * The "booting" method of the model.
+     * Automatically delete participants ketika task dihapus
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($task) {
+            // Delete all participants associated with this task
+            $task->participants()->delete();
+        });
+    }
 }
+

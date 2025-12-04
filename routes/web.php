@@ -68,9 +68,40 @@ Route::middleware('auth')->group(function () {
 
     // Dosen Routes
     Route::middleware('role:2')->group(function () {
-        Route::get('/dosen/dashboard', function () {
-            return "Dashboard Dosen";
-        })->name('dosen.dashboard');
+        Route::get('/dosen/dashboard', [\App\Http\Controllers\Dosen\DashboardController::class, 'index'])->name('dosen.dashboard');
+
+        // Profile Dosen
+        Route::get('/dosen/profile', [\App\Http\Controllers\Dosen\ProfileController::class, 'show'])->name('dosen.profile.show');
+        Route::get('/dosen/profile/edit', [\App\Http\Controllers\Dosen\ProfileController::class, 'edit'])->name('dosen.profile.edit');
+        Route::put('/dosen/profile', [\App\Http\Controllers\Dosen\ProfileController::class, 'update'])->name('dosen.profile.update');
+
+        // Tasks
+        Route::resource('dosen/tasks', \App\Http\Controllers\Dosen\TaskController::class, ['as' => 'dosen']);
+
+        // Export & Bulk Actions
+        Route::get('/dosen/tasks/export/excel', [\App\Http\Controllers\Dosen\TaskController::class, 'export'])->name('dosen.tasks.export');
+        Route::post('/dosen/tasks/bulk-delete', [\App\Http\Controllers\Dosen\TaskController::class, 'bulkDelete'])->name('dosen.tasks.bulk-delete');
+        Route::post('/dosen/tasks/bulk-update-status', [\App\Http\Controllers\Dosen\TaskController::class, 'bulkUpdateStatus'])->name('dosen.tasks.bulk-update-status');
+
+        // Participant Management
+        Route::post('/dosen/participants/{participant}/accept',
+            [\App\Http\Controllers\Dosen\TaskController::class, 'acceptParticipant']
+        )->name('dosen.participants.accept');
+
+        Route::post('/dosen/participants/{participant}/reject',
+            [\App\Http\Controllers\Dosen\TaskController::class, 'rejectParticipant']
+        )->name('dosen.participants.reject');
+
+        Route::post('/dosen/participants/{participant}/update-status',
+            [\App\Http\Controllers\Dosen\TaskController::class, 'updateParticipantStatus']
+        )->name('dosen.participants.update-status');
+
+        // Attendance Management
+        Route::get('/dosen/tasks/{task}/attendance', [\App\Http\Controllers\Dosen\AttendanceController::class, 'index'])->name('dosen.attendance.index');
+        Route::post('/dosen/attendance/{participant}/check-in', [\App\Http\Controllers\Dosen\AttendanceController::class, 'checkIn'])->name('dosen.attendance.check-in');
+        Route::post('/dosen/attendance/{attendance}/check-out', [\App\Http\Controllers\Dosen\AttendanceController::class, 'checkOut'])->name('dosen.attendance.check-out');
+        Route::get('/dosen/tasks/{task}/attendance/report', [\App\Http\Controllers\Dosen\AttendanceController::class, 'report'])->name('dosen.attendance.report');
+        Route::delete('/dosen/attendance/{attendance}', [\App\Http\Controllers\Dosen\AttendanceController::class, 'delete'])->name('dosen.attendance.delete');
     });
 
     // Mahasiswa Routes

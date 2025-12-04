@@ -14,9 +14,19 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
-                    <a href="{{ route('dashboard') }}" class="text-2xl font-bold text-purple-600">
-                        Kompen
-                    </a>
+                    @if(Auth::user()->role_id == 1)
+                        <a href="{{ route('admin.dashboard') }}" class="text-2xl font-bold text-purple-600">
+                            Kompen Admin
+                        </a>
+                    @elseif(Auth::user()->role_id == 2)
+                        <a href="{{ route('dosen.dashboard') }}" class="text-2xl font-bold text-purple-600">
+                            Kompen Dosen
+                        </a>
+                    @else
+                        <a href="{{ route('mahasiswa.dashboard') }}" class="text-2xl font-bold text-purple-600">
+                            Kompen
+                        </a>
+                    @endif
                 </div>
                 <div class="flex items-center space-x-4">
                     <span class="text-gray-600">{{ Auth::user()->username }}</span>
@@ -27,8 +37,8 @@
                         <div class="absolute right-0 w-48 bg-white rounded-lg shadow-lg hidden group-hover:block z-10">
                             @if(Auth::user()->role_id == 1)
                                 <a href="{{ route('admin.profile.show') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profil</a>
-                            @else
-                                <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profil</a>
+                            @elseif(Auth::user()->role_id == 2)
+                                <a href="{{ route('dosen.profile.show') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Profil</a>
                             @endif
                             <form method="POST" action="{{ route('logout') }}" class="block">
                                 @csrf
@@ -85,8 +95,11 @@
                         </a>
                     </div>
                 @elseif(Auth::user()->role_id == 2)
-                    <a href="{{ route('dashboard') }}" class="block px-4 py-2 rounded hover:bg-gray-700">
+                    <a href="{{ route('dosen.dashboard') }}" class="block px-4 py-2 rounded hover:bg-gray-700 @if(request()->routeIs('dosen.dashboard')) bg-gray-700 @endif">
                         <i class="fas fa-home mr-2"></i> Home
+                    </a>
+                    <a href="{{ route('dosen.tasks.index') }}" class="block px-4 py-2 rounded hover:bg-gray-700 @if(request()->routeIs('dosen.tasks.*')) bg-gray-700 @endif">
+                        <i class="fas fa-tasks mr-2"></i> Kelola Task
                     </a>
                 @elseif(Auth::user()->role_id == 3)
                     <a href="{{ route('dashboard') }}" class="block px-4 py-2 rounded hover:bg-gray-700">

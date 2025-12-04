@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Participant extends Model
 {
     protected $table = "participants";
-    
+
     protected $fillable = [
         "id_task",
         "id_mhs",
@@ -26,5 +26,11 @@ class Participant extends Model
     public function mahasiswa()
     {
         return $this->belongsTo(Mahasiswa::class, 'id_mhs');
+    }
+
+    // Relasi ke Attendance
+    public function attendance()
+    {
+        return $this->hasMany(Attendance::class, 'id_participant');
     }
 }
